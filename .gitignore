@@ -1,0 +1,14 @@
+node_modules
+npm-debug.log
+.env
+.env.local
+.DS_Store
+*.log
+.vscode
+.idea
+coverage
+.nyc_output
+.cache
+dist
+build
+package-lock.json

@@ -1,0 +1,40 @@
+{
+  "name": "ss-email",
+  "version": "1.0.0",
+  "description": "Email automation service for realtor outreach and STR property management",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Test command placeholder\""
+  },
+  "keywords": [
+    "email",
+    "automation",
+    "realtor",
+    "str",
+    "staystra"
+  ],
+  "author": "Staystra Team",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "dotenv": "^16.3.1",
+    "axios": "^1.6.2",
+    "joi": "^17.11.0",
+    "uuid": "^9.0.1",
+    "bull": "^4.11.5",
+    "redis": "^4.6.11",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "compression": "^1.7.4",
+    "express-rate-limit": "^7.1.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
