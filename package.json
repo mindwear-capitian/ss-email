@@ -29,7 +29,11 @@
     "helmet": "^7.1.0",
     "cors": "^2.8.5",
     "compression": "^1.7.4",
-    "express-rate-limit": "^7.1.5"
+    "express-rate-limit": "^7.1.5",
+    "nodemailer": "^6.10.1",
+    "puppeteer": "^21.6.0",
+    "apify-client": "^2.8.3",
+    "node-cron": "^3.0.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

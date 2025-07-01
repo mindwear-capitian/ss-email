@@ -1,7 +1,19 @@
 FROM node:18-alpine
 
-# Install dependencies for health checks
-RUN apk add --no-cache wget
+# Install dependencies for health checks and Puppeteer
+RUN apk add --no-cache \
+    wget \
+    chromium \
+    nss \
+    freetype \
+    freetype-dev \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont
+
+# Tell Puppeteer to use installed Chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Create app directory
 WORKDIR /app

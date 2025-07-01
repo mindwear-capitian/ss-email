@@ -44,6 +44,11 @@ app.get('/', (req, res) => {
         endpoints: {
             health: '/health',
             api: {
+                test: {
+                    verify: '/api/test/verify',
+                    send: '/api/test/send',
+                    config: '/api/test/config'
+                },
                 contacts: '/api/contacts',
                 campaigns: '/api/campaigns',
                 discovery: '/api/discovery',
@@ -52,6 +57,28 @@ app.get('/', (req, res) => {
         }
     });
 });
+
+// Routes
+const testRoutes = require('./routes/test');
+const trackingRoutes = require('./routes/tracking');
+const strOutreachRoutes = require('./routes/strOutreach');
+
+// Initialize jobs
+const strOutreachJob = require('./jobs/strOutreachJob');
+strOutreachJob.init();
+
+// Test database connection
+const { testConnection } = require('./utils/db');
+testConnection();
+
+// Test routes
+app.use('/api/test', testRoutes);
+
+// Tracking routes (no rate limiting for tracking pixels)
+app.use('/api/tracking', trackingRoutes);
+
+// STR Outreach routes
+app.use('/api/str-outreach', strOutreachRoutes);
 
 // Routes (to be implemented)
 // const contactRoutes = require('./routes/contacts');
