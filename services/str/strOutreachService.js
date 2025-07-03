@@ -19,35 +19,44 @@ class STROutreachService {
     async fetchNewSTRListings(limit = 10) {
         console.log('Fetching new STR listings from Apify...');
         
-        // TODO: Replace with actual Apify actor details
+        // Apify actor input for Zillow scraper
         const input = {
-            searchType: 'sale',
-            propertyType: 'vacation_rental',
-            daysOnMarket: 1, // New listings only
-            maxItems: limit
+            searchUrls: [
+                {
+                    // Orlando, FL - new listings in last 24 hours
+                    url: 'https://www.zillow.com/orlando-fl/?searchQueryState=%7B%22pagination%22%3A%7B%7D%2C%22isMapVisible%22%3Atrue%2C%22mapBounds%22%3A%7B%22west%22%3A-81.55%2C%22east%22%3A-81.15%2C%22south%22%3A28.38%2C%22north%22%3A28.68%7D%2C%22filterState%22%3A%7B%22doz%22%3A%7B%22value%22%3A%221%22%7D%2C%22sort%22%3A%7B%22value%22%3A%22days%22%7D%2C%22ah%22%3A%7B%22value%22%3Afalse%7D%2C%22apa%22%3A%7B%22value%22%3Afalse%7D%2C%22manu%22%3A%7B%22value%22%3Afalse%7D%2C%22land%22%3A%7B%22value%22%3Afalse%7D%7D%2C%22isListVisible%22%3Atrue%7D'
+                },
+                // Add more cities here as needed
+            ],
+            extractionMethod: 'PAGINATION_WITH_ZOOM_IN',
+            maxResults: limit
         };
 
         try {
             // Run the Apify actor
-            const run = await this.apifyClient.actor('YOUR_ACTOR_ID').call(input);
+            const run = await this.apifyClient.actor('maxcopell~zillow-scraper').call(input);
             
             // Get results
             const { items } = await this.apifyClient.dataset(run.defaultDatasetId).listItems();
             
             return items.map(item => ({
-                zillow_url: item.url,
-                property_address: item.address,
-                city: item.city,
-                state: item.state,
-                zip_code: item.zipCode,
-                mls_number: item.mlsNumber,
-                listing_price: item.price,
-                listing_date: new Date(item.listingDate),
-                days_on_market: item.daysOnMarket,
-                agent_name: item.agentName,
-                agent_email: item.agentEmail,
-                agent_phone: item.agentPhone,
-                brokerage: item.brokerage
+                zillow_url: item.detailUrl || item.url,
+                property_address: item.address || `${item.addressStreet}, ${item.addressCity}, ${item.addressState} ${item.addressZipcode}`,
+                city: item.addressCity || item.city,
+                state: item.addressState || item.state,
+                zip_code: item.addressZipcode || item.zipcode,
+                mls_number: item.mlsid || item.mlsNumber || null,
+                listing_price: item.unformattedPrice || item.price,
+                listing_date: item.datePosted ? new Date(item.datePosted) : new Date(),
+                days_on_market: item.daysOnZillow || item.hdpData?.homeInfo?.daysOnZillow || 1,
+                agent_name: item.attributionInfo?.agentName || null,
+                agent_email: item.attributionInfo?.agentEmail || null,
+                agent_phone: item.attributionInfo?.agentPhoneNumber || null,
+                brokerage: item.brokerName || item.attributionInfo?.brokerName || null,
+                property_type: item.hdpData?.homeInfo?.homeType || item.homeType,
+                bedrooms: item.beds || item.bedrooms,
+                bathrooms: item.baths || item.bathrooms,
+                zpid: item.zpid
             }));
         } catch (error) {
             console.error('Error fetching STR listings:', error);

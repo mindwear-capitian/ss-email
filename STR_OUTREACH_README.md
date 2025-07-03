@@ -146,9 +146,15 @@ curl -X POST http://localhost:3004/api/str-outreach/run \
 
 ## Known Issues & TODOs
 
-### High Priority
+### Critical Blockers (As of 2025-07-03)
+1. **No Agent Data from Zillow** - Zillow doesn't provide agent names/emails in their public data
+   - Without agent names, email discovery is nearly impossible
+   - Affects 100% of listings - system will skip all properties
+   - See APIFY_INTEGRATION_STATUS.md for details
+
+### High Priority (Original Issues)
 1. **Share Link Missing** - The analyzer page doesn't have share functionality yet
-2. **Apify Actor** - Need to create/configure the Zillow STR actor
+2. **Apify Actor** - ✅ COMPLETED - Using maxcopell~zillow-scraper
 3. **CSS Selectors** - Need to update selectors to match actual analyzer page
 
 ### Future Enhancements
