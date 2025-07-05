@@ -5,8 +5,9 @@ The SS-Email service is a dedicated microservice for email automation, outreach 
 
 ## Service Architecture
 - **Container**: `staystra-ss-email`
-- **Port**: 3004 (internal and external)
-- **External URL**: https://email.re-workflow.com
+- **Port**: 3004 (internal only, localhost for development)
+- **External URL**: None (internal-only service)
+- **Internal Access**: http://ss-email:3004
 - **Framework**: Node.js with Express
 - **Email Provider**: Brevo (formerly Sendinblue)
 
