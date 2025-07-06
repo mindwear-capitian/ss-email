@@ -64,8 +64,10 @@ const trackingRoutes = require('./routes/tracking');
 const strOutreachRoutes = require('./routes/strOutreach');
 
 // Initialize jobs
-const strOutreachJob = require('./jobs/strOutreachJob');
-strOutreachJob.init();
+// DISABLED: STR Outreach job is deprecated and no longer in use
+// See jobs/strOutreachJob.js header for deprecation reasons
+// const strOutreachJob = require('./jobs/strOutreachJob');
+// strOutreachJob.init();
 
 // Test database connection
 const { testConnection } = require('./utils/db');
