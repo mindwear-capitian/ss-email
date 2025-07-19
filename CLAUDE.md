@@ -144,6 +144,22 @@ curl http://localhost:3004/api/str-outreach/stats | jq
 - Input validation with Joi
 - Non-root user in container
 
+## Recent Updates
+
+### v2.28.0 - SS-Email Service & STR Outreach System
+- **New container**: `ss-email` - Dedicated email automation service
+- **Email provider**: Integrated with Brevo (formerly Sendinblue) for reliable delivery
+- **STR Outreach system**: Automated email campaigns for new STR listings
+  - Fetches new listings from Zillow via Apify
+  - Analyzes properties with StaySTRA analyzer
+  - Sends personalized emails to listing agents
+  - Tracks email opens and link clicks
+  - **Status**: Pending share link functionality on analyzer page
+- **Database tables**: `str_outreach_campaigns` and `str_email_events`
+- **API endpoints**: Full REST API for campaign management and tracking
+- **Cron job**: Daily at 9 AM for automated outreach
+- **Repository**: `https://github.com/mindwear-capitian/ss-email.git`
+
 ## Troubleshooting
 
 ### Email Not Sending
