@@ -1,20 +1,19 @@
 /**
- * ⚠️ DEPRECATED - FOR REFERENCE ONLY ⚠️
+ * STR (Short-Term Rental) Outreach Job
  * 
- * This STR (Short-Term Rental) outreach job is NO LONGER IN USE.
+ * Automated email campaigns to real estate agents for high-scoring STR properties
  * 
- * REASONS FOR DEPRECATION:
- * 1. Zillow data no longer includes agent email addresses
- * 2. StaySTRA analyzer share URL functionality was never implemented
- * 3. The outreach strategy has been discontinued
+ * FEATURES:
+ * 1. Queries properties with StaySTRA score > 90
+ * 2. Gets agent contact info from Zillow cache
+ * 3. Enriches contacts via local DB, Brevo, or Enformion API
+ * 4. Sends personalized emails with revenue projections
+ * 5. Tracks all interactions via Brevo
  * 
- * This file is kept for reference purposes only to understand the previous
- * email outreach implementation. DO NOT enable or use this job.
+ * SCHEDULE: Daily at 9:00 AM ET
+ * VOLUME: 25 emails per day
  * 
- * Original purpose: Automated email campaigns to real estate agents with
- * new STR listings, including property analysis and revenue projections.
- * 
- * Last active: July 2025
+ * Last updated: July 2025
  */
 
 const cron = require('node-cron');
@@ -23,18 +22,23 @@ const strOutreachService = require('../services/str/strOutreachService');
 class STROutreachJob {
     constructor() {
         this.isRunning = false;
+        this.dailyLimit = 25; // Send 25 emails per day
     }
 
     /**
      * Initialize the cron job
-     * @deprecated This method should NOT be called. Job is disabled.
      */
     init() {
-        // DISABLED - DO NOT ENABLE
-        // Original schedule was: '0 9 * * *' (9:00 AM daily)
+        // Schedule for 9:00 AM ET daily
+        cron.schedule('0 9 * * *', async () => {
+            console.log('STR Outreach cron job triggered at', new Date().toISOString());
+            await this.run(this.dailyLimit);
+        }, {
+            scheduled: true,
+            timezone: "America/New_York"
+        });
         
-        console.warn('⚠️ STR Outreach job init() was called but job is DISABLED. This job is deprecated.');
-        return;
+        console.log('STR Outreach job initialized - will run daily at 9:00 AM ET with limit of', this.dailyLimit);
     }
 
     /**

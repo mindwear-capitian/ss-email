@@ -1,24 +1,35 @@
 const nodemailer = require('nodemailer');
 const { validate } = require('../utils/validator');
+// Import Brevo service - we'll delegate to it if API key is available
+const brevoEmailService = require('./brevoEmailService');
 
 class EmailService {
     constructor() {
         this.transporter = null;
         this.isConfigured = false;
-        this.config = {
-            host: process.env.SMTP_HOST || 'mail.re-workflow.com',
-            port: parseInt(process.env.SMTP_PORT || '465'),
-            secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS
-            },
-            tls: {
-                rejectUnauthorized: process.env.NODE_ENV === 'production' // Only enforce in production
-            }
-        };
-
-        this.initializeTransporter();
+        this.useBrevoApi = false;
+        
+        // Check if Brevo API is configured
+        if (process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY) {
+            this.useBrevoApi = true;
+            this.isConfigured = brevoEmailService.isConfigured;
+            console.log('Email service: Using Brevo API for email delivery');
+        } else {
+            // Fall back to SMTP configuration
+            this.config = {
+                host: process.env.SMTP_HOST || 'mail.re-workflow.com',
+                port: parseInt(process.env.SMTP_PORT || '465'),
+                secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+                auth: {
+                    user: process.env.SMTP_USER,
+                    pass: process.env.SMTP_PASS
+                },
+                tls: {
+                    rejectUnauthorized: process.env.NODE_ENV === 'production' // Only enforce in production
+                }
+            };
+            this.initializeTransporter();
+        }
     }
 
     initializeTransporter() {
@@ -44,8 +55,13 @@ class EmailService {
         if (!this.isConfigured) {
             return {
                 success: false,
-                message: 'Email service not configured. Check SMTP credentials.'
+                message: 'Email service not configured. Check credentials.'
             };
+        }
+
+        // Delegate to Brevo if using API
+        if (this.useBrevoApi) {
+            return brevoEmailService.verifyConnection();
         }
 
         try {
@@ -73,7 +89,12 @@ class EmailService {
         }
 
         if (!this.isConfigured) {
-            throw new Error('Email service not configured. Check SMTP credentials.');
+            throw new Error('Email service not configured. Check credentials.');
+        }
+
+        // Delegate to Brevo if using API
+        if (this.useBrevoApi) {
+            return brevoEmailService.sendEmail(options);
         }
 
         // Set default from address if not provided

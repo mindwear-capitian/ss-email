@@ -62,12 +62,11 @@ app.get('/', (req, res) => {
 const testRoutes = require('./routes/test');
 const trackingRoutes = require('./routes/tracking');
 const strOutreachRoutes = require('./routes/strOutreach');
+const webhookRoutes = require('./routes/webhooks');
 
 // Initialize jobs
-// DISABLED: STR Outreach job is deprecated and no longer in use
-// See jobs/strOutreachJob.js header for deprecation reasons
-// const strOutreachJob = require('./jobs/strOutreachJob');
-// strOutreachJob.init();
+const strOutreachJob = require('./jobs/strOutreachJob');
+strOutreachJob.init();
 
 // Test database connection
 const { testConnection } = require('./utils/db');
@@ -82,16 +81,17 @@ app.use('/api/tracking', trackingRoutes);
 // STR Outreach routes
 app.use('/api/str-outreach', strOutreachRoutes);
 
+// Webhook routes (no rate limiting for webhooks)
+app.use('/api/webhooks', webhookRoutes);
+
 // Routes (to be implemented)
 // const contactRoutes = require('./routes/contacts');
 // const campaignRoutes = require('./routes/campaigns');
 // const discoveryRoutes = require('./routes/discovery');
-// const webhookRoutes = require('./routes/webhooks');
 
 // app.use('/api/contacts', contactRoutes);
 // app.use('/api/campaigns', campaignRoutes);
 // app.use('/api/discovery', discoveryRoutes);
-// app.use('/api/webhooks', webhookRoutes);
 
 // Placeholder routes
 app.use('/api/contacts', (req, res) => {
