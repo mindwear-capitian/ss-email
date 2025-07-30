@@ -167,14 +167,21 @@ class STROutreachService {
         const lastName = nameParts.slice(1).join(' ') || '';
         
         try {
-            // Search with name and state only
+            // Search with name and state - matching your successful curl format
             const requestBody = {
                 FirstName: firstName,
+                MiddleName: "",
                 LastName: lastName,
+                Dob: "",
+                Age: null,
+                Phone: "",
+                Email: "",
                 Address: {
                     AddressLine1: "",
-                    AddressLine2: agentInfo.state || ""
-                }
+                    AddressLine2: agentInfo.state || ""  // Fixed typo from AddressLIne2
+                },
+                Page: 1,
+                ResultsPerPage: 10
             };
             
             // Only send if we have name and state
