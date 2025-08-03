@@ -39,10 +39,10 @@ class STROutreachService {
             WHERE a.staystra_score > $1
             AND z.zillow_data IS NOT NULL
             AND z.zillow_data->'listingAgent' IS NOT NULL
-            -- Only include properties analyzed in the last 24 hours
-            AND a.analysis_timestamp >= NOW() - INTERVAL '24 hours'
-            -- US Address validation
-            AND a.property_address_full ~ ', [A-Z]{2} [0-9]{5}'  -- Must have state code and ZIP
+            -- Only include properties analyzed in the last 7 days
+            AND a.analysis_timestamp >= NOW() - INTERVAL '7 days'
+            -- US Address validation - flexible format (state code with or without comma before ZIP)
+            AND a.property_address_full ~ ', [A-Z]{2},? [0-9]{5}'  -- Matches ", TX 75154" or ", TX, 75154"
             AND a.property_address_full NOT LIKE '0 %'  -- Filter out addresses starting with 0
             AND a.property_address_full NOT LIKE '00 %'  -- Filter out addresses starting with 00
             AND (z.zillow_data->>'state')::text IN (
@@ -161,8 +161,17 @@ class STROutreachService {
         
         console.log('Contact not found in database or Brevo, checking Enformion...');
         
+        // Clean agent name - remove titles and broker designations
+        let cleanName = agentInfo.name;
+        // Remove common titles and designations
+        cleanName = cleanName.replace(/\s*-\s*(Associate\s+)?Real\s+Estate\s+(Broker|Agent|Professional|Salesperson).*/i, '');
+        cleanName = cleanName.replace(/\s*,\s*(Broker|Agent|Realtor|GRI|CRS|ABR|SRS|SRES|PSA|ePRO).*/i, '');
+        cleanName = cleanName.trim();
+        
+        console.log(`Cleaned agent name: "${agentInfo.name}" -> "${cleanName}"`);
+        
         // Parse name into first/last
-        const nameParts = agentInfo.name.split(' ');
+        const nameParts = cleanName.split(' ');
         const firstName = nameParts[0] || '';
         const lastName = nameParts.slice(1).join(' ') || '';
         
@@ -178,7 +187,7 @@ class STROutreachService {
                 Email: "",
                 Address: {
                     AddressLine1: "",
-                    AddressLine2: agentInfo.state || ""  // Fixed typo from AddressLIne2
+                    AddressLIne2: agentInfo.state || ""  // API expects this typo (capital I)
                 },
                 Page: 1,
                 ResultsPerPage: 10

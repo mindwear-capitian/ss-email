@@ -22,7 +22,7 @@ const strOutreachService = require('../services/str/strOutreachService');
 class STROutreachJob {
     constructor() {
         this.isRunning = false;
-        this.dailyLimit = 25; // Send 25 emails per day
+        this.dailyLimit = 50; // Send 50 emails per day
     }
 
     /**
