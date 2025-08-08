@@ -39,8 +39,8 @@ class STROutreachService {
             WHERE a.staystra_score > $1
             AND z.zillow_data IS NOT NULL
             AND z.zillow_data->'listingAgent' IS NOT NULL
-            -- Only include properties analyzed in the last 7 days
-            AND a.analysis_timestamp >= NOW() - INTERVAL '7 days'
+            -- Include properties analyzed in the last 30 days to catch backlog
+            AND a.analysis_timestamp >= NOW() - INTERVAL '30 days'
             -- US Address validation - flexible format (state code with or without comma before ZIP)
             AND a.property_address_full ~ ', [A-Z]{2},? [0-9]{5}'  -- Matches ", TX 75154" or ", TX, 75154"
             AND a.property_address_full NOT LIKE '0 %'  -- Filter out addresses starting with 0
